@@ -3,13 +3,15 @@
   "short_name": "UberCalc",
   "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#00a2ff",
+  "background_color": "#111111",
+  "theme_color": "#00c851",
   "icons": [
     {
       "src": "icon.png",
-      "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "sizes": "512x512"
     }
   ]
 }
+
+
