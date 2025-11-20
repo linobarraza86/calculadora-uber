@@ -1,193 +1,126 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculadora Uber</title>
-<link rel="manifest" href="manifest.json">
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        padding: 20px;
-        background: var(--bg);
-        color: var(--text);
-        transition: 0.3s;
-    }
-    :root {
-        --bg: #f1f1f1;
-        --text: #000;
-        --card: #fff;
-        --button: #007bff;
-        --button-text: #fff;
-    }
-    .dark {
-        --bg: #121212;
-        --text: #ffffff;
-        --card: #1e1e1e;
-        --button: #00a2ff;
-        --button-text: #000;
-    }
-    .container {
-        background: var(--card);
-        padding: 20px;
-        border-radius: 14px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        max-width: 450px;
-        margin: auto;
-    }
-    h2 { text-align: center; margin-bottom: 20px; }
-    label { font-weight: bold; }
-    input, select {
-        width: 100%;
-        padding: 12px;
-        margin: 8px 0 16px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        font-size: 16px;
-        background: var(--card);
-        color: var(--text);
-    }
-    button {
-        width: 100%;
-        padding: 15px;
-        background: var(--button);
-        color: var(--button-text);
-        border: none;
-        border-radius: 10px;
-        font-size: 18px;
-        margin-top: 10px;
-    }
-    .resultado {
-        margin-top: 20px;
-        padding: 15px;
-        background: var(--card);
-        border-radius: 10px;
-    }
-    .toggle {
-        cursor: pointer;
-        font-size: 14px;
-        text-align: center;
-        margin-bottom: 10px;
-        color: #00a2ff;
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Uber - Viabilidad de Viaje</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #111;
+            color: #f1f1f1;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: #222;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #00c851;
+            border: none;
+            color: white;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #009e3e;
+        }
+
+        #resultado {
+            margin-top: 20px;
+            padding: 15px;
+            background: #333;
+            border-radius: 10px;
+        }
+    </style>
 </head>
+
 <body>
 
-<div class="toggle" onclick="toggleTheme()">🌙 Cambiar modo</div>
+    <h1>Calculadora Uber</h1>
 
-<div class="container">
-    <h2>Calculadora Uber</h2>
+    <div class="container">
+        <h3>Datos del vehículo</h3>
+        <label>Rendimiento (km por litro):</label>
+        <input type="number" id="rendimiento" step="0.1">
 
-    <label>Rendimiento (km/L):</label>
-    <input type="number" id="rendimiento" step="0.1">
+        <label>Precio gasolina por litro:</label>
+        <input type="number" id="precio_gasolina" step="0.1">
 
-    <label>Precio del combustible:</label>
-    <input type="number" id="precio" step="0.1">
+        <label>Desgaste del vehículo por km (recomendado: 1.2):</label>
+        <input type="number" id="desgaste" step="0.1" value="1.2">
 
-    <label>Distancia del viaje (km):</label>
-    <input type="number" id="distancia" step="0.1">
+        <h3>Datos del viaje</h3>
+        <label>Distancia del viaje (km):</label>
+        <input type="number" id="km" step="0.1">
 
-    <label>Pago ($):</label>
-    <input type="number" id="pago" step="0.1">
+        <label>Pago del viaje:</label>
+        <input type="number" id="pago" step="0.1">
 
-    <label>Comisión de Uber (%):</label>
-    <input type="number" id="comision" step="1" value="25">
+        <button onclick="calcular()">Calcular Viabilidad</button>
 
-    <label>Desgaste del vehículo ($/km):</label>
-    <input type="number" id="desgaste" step="0.1" value="0.80">
+        <div id="resultado"></div>
+    </div>
 
-    <button onclick="calcular()">Calcular Viabilidad</button>
-    <button onclick="calcularCobro()">¿Cuánto debo cobrar?</button>
+    <script>
+        function calcular() {
+            let rendimiento = parseFloat(document.getElementById("rendimiento").value);
+            let precioGasolina = parseFloat(document.getElementById("precio_gasolina").value);
+            let desgaste = parseFloat(document.getElementById("desgaste").value);
+            let km = parseFloat(document.getElementById("km").value);
+            let pago = parseFloat(document.getElementById("pago").value);
 
-    <div class="resultado" id="resultado"></div>
-</div>
+            // Cálculos
+            let litros = km / rendimiento;
+            let costoGasolina = litros * precioGasolina;
+            let costoDesgaste = km * desgaste;
+            let ganancia = pago - (costoGasolina + costoDesgaste);
+            let ingresoPorKm = pago / km;
 
-<script>
-// ---------- MODO OSCURO ----------
-function toggleTheme() {
-    document.body.classList.toggle("dark");
-    localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
-}
-if (localStorage.getItem("theme") === "dark") document.body.classList.add("dark");
+            // REGLA NUEVA: mínimo $7 pesos por km
+            let esViable = ingresoPorKm >= 7;
 
-// ---------- GUARDAR DATOS DEL VEHÍCULO ----------
-window.onload = () => {
-    if (localStorage.getItem("rendimiento")) {
-        document.getElementById("rendimiento").value = localStorage.getItem("rendimiento");
-        document.getElementById("precio").value = localStorage.getItem("precio");
-    }
-};
-
-function saveVehicleData() {
-    localStorage.setItem("rendimiento", document.getElementById("rendimiento").value);
-    localStorage.setItem("precio", document.getElementById("precio").value);
-}
-
-// ---------- CALCULAR VIABILIDAD ----------
-function calcular() {
-    saveVehicleData();
-
-    let r = parseFloat(document.getElementById("rendimiento").value);
-    let precio = parseFloat(document.getElementById("precio").value);
-    let km = parseFloat(document.getElementById("distancia").value);
-    let pago = parseFloat(document.getElementById("pago").value);
-    let comision = parseFloat(document.getElementById("comision").value);
-    let desgaste = parseFloat(document.getElementById("desgaste").value);
-
-    let litros = km / r;
-    let costoGas = litros * precio;
-    let costoDesgaste = km * desgaste;
-    let uber = pago * (comision / 100);
-    let pagoFinal = pago - uber;
-
-    let ganancia = pagoFinal - costoGas - costoDesgaste;
-
-    document.getElementById("resultado").innerHTML = `
-        <b>Litros:</b> ${litros.toFixed(2)} L<br>
-        <b>Costo gasolina:</b> $${costoGas.toFixed(2)}<br>
-        <b>Desgaste:</b> $${costoDesgaste.toFixed(2)}<br>
-        <b>Comisión Uber:</b> -$${uber.toFixed(2)}<br>
-        <b>Te quedan:</b> $${pagoFinal.toFixed(2)}<br><br>
-        <b>Ganancia final:</b> $${ganancia.toFixed(2)}<br><br>
-        ${ganancia > 0 
-            ? "<b style='color:lightgreen;'>✔ Viaje viable</b>" 
-            : "<b style='color:red;'>❌ No conviene</b>"
+            document.getElementById("resultado").innerHTML = `
+                <p>Litros usados: ${litros.toFixed(2)} L</p>
+                <p>Costo gasolina: $${costoGasolina.toFixed(2)}</p>
+                <p>Costo desgaste: $${costoDesgaste.toFixed(2)}</p>
+                <p><strong>Ganancia estimada: $${ganancia.toFixed(2)}</strong></p>
+                <p>Ingreso por km: <strong>$${ingresoPorKm.toFixed(2)}</strong></p>
+                <p style="color:${esViable ? 'lime' : 'red'}; font-weight:bold; font-size:20px;">
+                    Viaje ${esViable ? 'VIABLE ✔️' : 'NO VIABLE ❌'}
+                </p>
+            `;
         }
-    `;
-}
+    </script>
 
-// ---------- ¿CUÁNTO DEBO COBRAR? ----------
-function calcularCobro() {
-    let r = parseFloat(document.getElementById("rendimiento").value);
-    let precio = parseFloat(document.getElementById("precio").value);
-    let km = parseFloat(document.getElementById("distancia").value);
-    let comision = parseFloat(document.getElementById("comision").value);
-    let desgaste = parseFloat(document.getElementById("desgaste").value);
-
-    let litros = km / r;
-    let costoGas = litros * precio;
-    let costoDesgaste = km * desgaste;
-
-    let costos = costoGas + costoDesgaste;
-
-    let cobroNecesario = costos / (1 - comision / 100);
-
-    document.getElementById("resultado").innerHTML = `
-        <b>Costo total del viaje:</b> $${costos.toFixed(2)}<br>
-        <b>Uber descuenta:</b> ${comision}%<br><br>
-        <b>Debes cobrar mínimo:</b> <span style="color:yellow;font-size:22px;">$${cobroNecesario.toFixed(2)}</span>
-    `;
-}
-</script>
-
-<script>
-// ---------- PWA SERVICE WORKER ----------
-if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("sw.js");
-}
-</script>
+    <script src="sw.js"></script>
 
 </body>
 </html>
+
+
 
