@@ -65,6 +65,7 @@
 
     <div class="container">
         <h3>Datos del vehículo</h3>
+        
         <label>Rendimiento (km por litro):</label>
         <input type="number" id="rendimiento" step="0.1">
 
@@ -87,6 +88,29 @@
     </div>
 
     <script>
+        // -------------------------------
+        // GUARDAR DATOS DEL VEHÍCULO
+        // -------------------------------
+        const campos = ["rendimiento", "precio_gasolina", "desgaste"];
+
+        // Cargar valores guardados
+        window.onload = function () {
+            campos.forEach(id => {
+                const valor = localStorage.getItem(id);
+                if (valor !== null) document.getElementById(id).value = valor;
+            });
+        };
+
+        // Guardar automáticamente cuando se escribe
+        campos.forEach(id => {
+            document.getElementById(id).addEventListener("input", () => {
+                localStorage.setItem(id, document.getElementById(id).value);
+            });
+        });
+
+        // -------------------------------
+        // CÁLCULO
+        // -------------------------------
         function calcular() {
             let rendimiento = parseFloat(document.getElementById("rendimiento").value);
             let precioGasolina = parseFloat(document.getElementById("precio_gasolina").value);
@@ -94,14 +118,13 @@
             let km = parseFloat(document.getElementById("km").value);
             let pago = parseFloat(document.getElementById("pago").value);
 
-            // Cálculos
             let litros = km / rendimiento;
             let costoGasolina = litros * precioGasolina;
             let costoDesgaste = km * desgaste;
             let ganancia = pago - (costoGasolina + costoDesgaste);
             let ingresoPorKm = pago / km;
 
-            // REGLA NUEVA: mínimo $7 pesos por km
+            // Minimo permitido por km
             let esViable = ingresoPorKm >= 7;
 
             document.getElementById("resultado").innerHTML = `
@@ -121,6 +144,5 @@
 
 </body>
 </html>
-
 
 
